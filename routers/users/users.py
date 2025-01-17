@@ -1,12 +1,12 @@
 from typing import Annotated
 from datetime import timedelta
 from fastapi import APIRouter, HTTPException
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import status, Depends, HTTPException
 from schemas.user.user import UserResponse, Token
 from schemas.user.user import UserCreate, UserResponse
-from models.user.user import User, Organization
-from auth.user import get_current_user, authenticate_user, create_access_token, verify_password, get_password_hash
+from models.user.user import User
+from auth.user import get_current_user, authenticate_user, create_access_token, get_password_hash
 from core.database.database import Base, engine, get_db
 from core.config import settings
 from sqlalchemy.orm import Session
@@ -36,7 +36,6 @@ async def login_for_access_token(
     )
     return Token(access_token=access_token, token_type="bearer")
 
-# Endpoints
 @user_router.post("/register_user", response_model=UserResponse)
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
     # Check if username already exists
@@ -51,8 +50,6 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
             hashed_password=hashed_password,
             role=user.role,
         )
-    # except Exception as e:
-    #     raise HTTPException(status_code=400, detail=f"error {e}")
     
         db.add(new_user)
         db.commit()
@@ -70,21 +67,9 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
         role=new_user.role
     )
 
-# @user_router.post("/login", response_model=Token)
-# def login(form_data: OAuth2PasswordRequestForm = Depends(), db: SessionLocal = Depends(get_db)):
-#     user = db.query(User).filter(User.username == form_data.username).first()
-#     if not user or not verify_password(form_data.password, user.hashed_password):
-#         raise HTTPException(status_code=401, detail="Invalid credentials")
-
-#     access_token = create_access_token(
-#         data={"sub": user.username, "role": user.role}
-#     )
-#     return {"access_token": access_token, "token_type": "bearer"}
-
 @user_router.get("/me", response_model=UserResponse)
 def get_current_user_profile(current_user: User = Depends(get_current_user)):
     return UserResponse(
         username=current_user.username,
         role=current_user.role,
-        # organization=current_user.organization.name if current_user.organization else None
     )

@@ -1,6 +1,6 @@
 from typing import List
 from fastapi import APIRouter
-from fastapi import status, Depends, HTTPException
+from fastapi import Depends, HTTPException
 from schemas.user.user import OrganizationCreate, OrganizationResponse, OrganizationJoin, OrganizationJoinResponse
 from auth.user import require_role, get_current_user
 from models.user.user import User, Organization

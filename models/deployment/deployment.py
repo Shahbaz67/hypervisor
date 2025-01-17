@@ -14,6 +14,6 @@ class Deployment(Base):
     required_cpu = Column(Integer, nullable=False)
     required_gpu = Column(Integer, nullable=False)
     priority = Column(Integer, nullable=False)  # Higher number = higher priority
-    status = Column(SQLAlchemyEnum(DeploymentStatus), default=DeploymentStatus.PENDING.value)  # queued, running, completed, failed
+    status = Column(SQLAlchemyEnum(DeploymentStatus), default=DeploymentStatus.PENDING.value)
 
     cluster = relationship("Cluster", back_populates="deployments")

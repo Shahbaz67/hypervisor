@@ -1,8 +1,6 @@
-from datetime import datetime, timedelta, timezone
-from fastapi import FastAPI, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-# from util.util import oauth2_scheme
-# from core.database.database import SessionLocal
+from datetime import datetime, timedelta
+from fastapi import HTTPException, Depends, status
+from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from models.user.user import User
 from schemas.user.user import TokenData
@@ -16,14 +14,6 @@ from sqlalchemy.orm import Session
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-
-# # Utility functions
-# def get_db():
-#     db = SessionLocal()
-#     try:
-#         yield db
-#     finally:
-#         db.close()
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
@@ -41,15 +31,8 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     encoded_jwt = jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
     return encoded_jwt
 
-# def get_user(username: str, db: Session = Depends(get_db)):
-#     user = db.query(User).filter(User.username == username).first()
-#     if user:
-#         user_dict = db[username]
-#         return UserInDB(**user_dict)
-
 
 def authenticate_user(username: str, password: str, db: Session):
-    # user = get_user(username)
     user = db.query(User).filter(User.username == username).first()
     if not user:
         return False

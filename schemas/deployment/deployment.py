@@ -32,7 +32,7 @@ class DeploymentResponse(BaseModel):
     required_cpu: int  # Number of cores
     required_gpu: int  # Number of GPUs
     priority: int  # Higher value = higher priority
-    status: str  # e.g., "queued", "running", "completed", "failed"
+    status: str
 
     class Config:
         from_attributes = True
